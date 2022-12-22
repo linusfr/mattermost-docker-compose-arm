@@ -1,0 +1,40 @@
+services:
+  postgres:
+    container_name: mattermost-postgres
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /mattermost/postgres
+    volumes:
+       - postgres:/mattermost/postgres
+    restart: always
+
+  mattermost-server:
+    build:
+      context: ./mattermost-server/build
+      dockerfile: Dockerfile
+      args:
+        # https://github.com/SmartHoneybee/ubiquitous-memory/releases/tag/v7.5.2
+        MM_PACKAGE: https://github.com/SmartHoneybee/ubiquitous-memory/releases/download/v7.5.2/mattermost-v7.5.2-linux-arm.tar.gz
+    container_name: mattermost
+    environment:
+      MM_CONFIG: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mattermost?sslmode=disable&connect_timeout=10
+    volumes:
+      - mattermost-config:/mattermost/config:rw
+      - mattermost-data:/mattermost/data:rw
+      - mattermost-plugins:/mattermost/plugins:rw
+    ports:
+      - "127.0.0.1:8066:8065"
+    restart: always
+    depends_on:
+      - postgres
+    ulimits:
+      nofile: 49152
+
+volumes:
+  postgres:
+  mattermost-config:
+  mattermost-data:
+  mattermost-plugins:
