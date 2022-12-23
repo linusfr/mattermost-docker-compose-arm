@@ -17,7 +17,7 @@ services:
       dockerfile: Dockerfile
       args:
         # https://github.com/SmartHoneybee/ubiquitous-memory/releases/tag/v7.5.2
-        MM_PACKAGE: https://github.com/SmartHoneybee/ubiquitous-memory/releases/download/v7.5.2/mattermost-v7.5.2-linux-arm.tar.gz
+        MM_PACKAGE: https://github.com/SmartHoneybee/ubiquitous-memory/releases/download/${MATTERMOST_VERSION}/mattermost-${MATTERMOST_VERSION}-linux-arm.tar.gz
     container_name: mattermost
     environment:
       MM_CONFIG: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/mattermost?sslmode=disable&connect_timeout=10
